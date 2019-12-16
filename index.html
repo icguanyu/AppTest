@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>RL-12</title>
+</head>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    font-family: '微軟正黑體';
+  }
+
+  h1,
+  h2,
+  p {
+    margin: 0;
+  }
+
+  hr.style {
+    width: 80%;
+    margin: 20px auto;
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.1), rgba(100, 100, 100, 0.3), rgba(0, 0, 0, 0.1));
+  }
+
+  button {
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    font-size: 16px;
+    color: #585858;
+    padding: 10px;
+    letter-spacing: 2px;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    margin-top: 8px;
+  }
+
+  button.primary {
+    color: white;
+    background: rgb(38, 170, 145);
+  }
+
+  button.small {
+    font-size: 12px;
+    padding: 10px;
+    width: 100px;
+    margin-top: 20px;
+    color: white;
+    background: rgb(38, 170, 145);
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .warp {
+    margin: 5px;
+  }
+
+  .tabs {
+    display: flex;
+  }
+
+  .tabs .item.active {
+    font-weight: bold;
+    border-bottom: none;
+    background: white;
+  }
+
+  .tabs .item {
+    flex: 1;
+    cursor: pointer;
+    align-items: center;
+    color: #5a5a5a;
+    background: #eee;
+    text-align: center;
+    padding: 10px 15px;
+    border-width: 1px 1px 1px 0px;
+    border-color: #ddd;
+    border-style: solid;
+  }
+
+  .tabs .item:first-child {
+    border-left: 1px solid #ddd;
+    border-radius: 5px 0 0 0;
+  }
+
+  .tabs .item:last-child {
+    border-left: none;
+    border-radius: 0 5px 0 0;
+  }
+
+  .container {
+    border-width: 0px 1px 1px 1px;
+    border-color: #ddd;
+    border-style: solid;
+    padding: 10px 10px 20px 10px;
+  }
+
+  .container .content.active {
+    display: block;
+  }
+
+  .container .shop-info {
+    display: flex;
+    margin: 10px;
+  }
+
+  .container .shop-info .shop-img {
+    position: relative;
+    border: 1px solid #ddd;
+    flex: 2;
+    max-width: 200px;
+    min-height: 120px;
+    margin-right: 15px;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .container .shop-info .shop-img img {
+    width: 100%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .container .shop-info .detail {
+    flex: 3;
+  }
+
+  .container .shop-info .detail p {
+    margin: 5px 0;
+    color: #6a6a6a;
+  }
+
+
+  .container .content {
+    display: none;
+  }
+
+
+  .container .content .order-info {
+    text-align: center;
+    line-height: 26px;
+    margin: 10px 0;
+    padding: 10px;
+    background: #f0f0f0;
+  }
+
+  .container .content .order-info .counts .number {
+    display: inline-block;
+    font-weight: 600;
+    font-size: 3rem;
+    margin: 10px 0;
+  }
+
+  .container .content .order-info .counts .number span {
+    font-size: initial;
+  }
+
+  .container .content .order-info span {
+    letter-spacing: 1px;
+    font-weight: 600;
+  }
+
+  .container .content .empty {
+    text-align: center;
+    min-height: 100px;
+    margin-top: 10px;
+    padding: 10px 20px;
+    background: #f0f0f0;
+  }
+
+  .dailog {
+    pointer-events: none;
+    display: flex;
+    position: fixed;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, .4);
+    opacity: 0;
+    transition: all .2s;
+  }
+
+  .dailog.active {
+    pointer-events: auto;
+    display: flex;
+    opacity: 1;
+  }
+
+  .dailog .content {
+    border-top: 3px solid rgb(38, 170, 145);
+    position: relative;
+    width: 70%;
+    min-height: 100px;
+    padding: 30px 15px 20px 15px;
+    background: white;
+    border-radius: 5px;
+    transform: translateY(-60%);
+    transition: all .3s;
+  }
+
+  .dailog.active .content {
+    transform: translateY(0%);
+  }
+
+  .dailog .content .close {
+    cursor: pointer;
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    width: 20px;
+    height: 20px;
+    border: 1px solid #666;
+    border-radius: 50%;
+  }
+
+  .dailog .content .close:after,
+  .dailog .content .close:before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 70%;
+    height: 1px;
+    background: #666;
+  }
+
+  .dailog .content .close:after {
+    transform: translate(-50%) rotate(45deg);
+  }
+
+  .dailog .content .close:before {
+    transform: translate(-50%) rotate(-45deg);
+  }
+
+  .dailog .content .title {
+    letter-spacing: 2px;
+    font-weight: 600;
+    margin-bottom: 5px;
+  }
+</style>
+
+<body>
+  <div class="warp">
+    <div class="tabs">
+      <div class="item active">線上預約</div>
+      <div class="item">現場預約</div>
+    </div>
+    <div class="container">
+      <div class="shop-info">
+        <div class="shop-img">
+          <img src="https://fakeimg.pl/200x200/282828/eae0d0/?retina=1" alt="">
+        </div>
+        <div class="detail">
+          <h2>全能科技資訊有限公司</h2>
+          <p>店家類型：<span>美式餐廳</span></p>
+        </div>
+      </div>
+      <!--線上預約-->
+      <div class="content active">
+        <hr class="style">
+        <div class="order-info">
+          <div class="date">預約日期：<span>2019/12/31</span></div>
+          <div class="time">預約時間：<span>18:00</span></div>
+        </div>
+        <div class="btns">
+          <button data-name="cancel">取消預約</button>
+          <button class="primary" data-name="check-in" onclick="openDailog()">進場報到</button>
+          <button class="primary" data-name="check-in-success" onclick="openDailog()">已完成報到</button>
+        </div>
+        <hr class="style">
+        <div class="empty">
+          <div class="text-center">以下無預約，線上預約請至店家搜索完成預約。</div>
+        </div>
+      </div>
+      <!--現場預約-->
+      <div class="content">
+        <hr class="style">
+        <div class="order-info">
+          尚須等待組數
+          <div class="counts">
+            <div class="number">3<span>組</span></div>
+          </div>
+        </div>
+        <div class="btns">
+          <button class="primary" data-name="on-site" onclick="openDailog()">現場預約</button>
+          <button class="primary" data-name="book-success" onclick="openDailog()">已完成預約</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="dailog">
+    <div class="content">
+      <div class="close"></div>
+      <div class="title">報到成功</div>
+      <div class="msg">請確保 wifi 持續連上 <span>wifi名稱</span> 以方便 App 通知進場</div>
+      <div class="text-center">
+        <button class="small" onclick="closeDailog()">OK</button>
+      </div>
+    </div>
+  </div>
+  <!-- Script -->
+  <script>
+
+    let tabs = [...document.querySelectorAll('.item')]
+    let contents = document.querySelectorAll('.content')
+
+    tabs.forEach(item => {
+      item.addEventListener('click', function (e) {
+        let target = tabs.indexOf(this)
+
+        tabs.forEach(item => { item.classList.remove('active') })
+        tabs[target].classList.add('active')
+        contents.forEach(item => { item.classList.remove('active') })
+        contents[target].classList.add('active')
+      })
+    });
+
+    /*dailog*/
+    let dailog = document.querySelector('.dailog');
+    let close = document.querySelector('.close');
+
+    function closeDailog() {
+      dailog.classList.remove('active')
+    }
+    function openDailog() {
+      dailog.classList.add('active')
+    }
+
+    close.addEventListener('click', closeDailog);
+    
+  </script>
+  <!-- Script -->
+</body>
+
+</html>
